@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
+import { type AuthUser } from "aws-amplify/auth";
+import { type BaseQueryFn } from "@reduxjs/toolkit/query";
+import { type FetchBaseQueryError, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -56,29 +59,68 @@ export const withToast = async <T>(
   }
 };
 
+type IdTokenPayload = {
+  email?: string;
+  [key: string]: string | undefined;
+};
+
+type CreateUserResponse = {
+  data?: unknown;
+  error?: FetchBaseQueryError;
+  meta?: FetchBaseQueryMeta;
+};
+
+type CreateUserBody = {
+  cognitoId: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+};
+
+type CreateUserArgs = {
+  url: string;
+  method: string;
+  body: CreateUserBody;
+};
+
 export const createNewUserInDatabase = async (
-  user: any,
-  idToken: any,
+  user: AuthUser,
+  idToken: { payload: IdTokenPayload },
   userRole: string,
-  fetchWithBQ: any
-) => {
+  fetchWithBQ: BaseQueryFn<CreateUserArgs, unknown, FetchBaseQueryError>
+): Promise<CreateUserResponse> => {
   const createEndpoint =
     userRole?.toLowerCase() === "manager" ? "/managers" : "/tenants";
 
-  const createUserResponse = await fetchWithBQ({
-    url: createEndpoint,
-    method: "POST",
-    body: {
-      cognitoId: user.userId,
-      name: user.username,
-      email: idToken?.payload?.email || "",
-      phoneNumber: "",
-    },
+  console.log("Creating user with endpoint:", createEndpoint);
+  console.log("User data:", {
+    cognitoId: user.userId,
+    name: user.username,
+    email: idToken?.payload?.email,
   });
 
-  if (createUserResponse.error) {
-    throw new Error("Failed to create user record");
-  }
+  try {
+    const createUserResponse = await fetchWithBQ({
+      url: createEndpoint,
+      method: "POST",
+      body: {
+        cognitoId: user.userId,
+        name: user.username,
+        email: idToken?.payload?.email || "",
+        phoneNumber: "",
+      },
+    });
 
-  return createUserResponse;
+    console.log("Create user response:", createUserResponse);
+
+    if (createUserResponse.error) {
+      console.error("Failed to create user:", createUserResponse.error);
+      throw new Error(`Failed to create user record: ${JSON.stringify(createUserResponse.error)}`);
+    }
+
+    return createUserResponse;
+  } catch (error) {
+    console.error("Error in createNewUserInDatabase:", error);
+    throw error;
+  }
 };

@@ -3,7 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getManager = async (req: Request, res: Response): Promise<void> => {
+export const getManager = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { cognitoId } = req.params;
     const manager = await prisma.manager.findUnique({
@@ -21,6 +24,7 @@ export const getManager = async (req: Request, res: Response): Promise<void> => 
       .json({ message: `Error retrieving manager: ${error.message}` });
   }
 };
+
 export const createManager = async (
   req: Request,
   res: Response
@@ -38,7 +42,7 @@ export const createManager = async (
     });
 
     res.status(201).json(manager);
-  } catch (error: any) { 
+  } catch (error: any) {
     res
       .status(500)
       .json({ message: `Error creating manager: ${error.message}` });
@@ -63,7 +67,7 @@ export const updateManager = async (
     });
 
     res.json(updateManager);
-  } catch (error: any) { 
+  } catch (error: any) {
     res
       .status(500)
       .json({ message: `Error updating manager: ${error.message}` });
