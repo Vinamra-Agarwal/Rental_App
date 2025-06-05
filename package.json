@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "@aws-sdk/lib-storage": "^3.824.0"
-  }
-}
