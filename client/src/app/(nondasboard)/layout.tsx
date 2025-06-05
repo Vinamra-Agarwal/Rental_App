@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { data: authUser, isLoading: authLoading } = useGetAuthUserQuery();
   console.log("authUser:", authUser);
+
   const router = useRouter();
       const pathname = usePathname();
       const [ isLoading, setIsLoading ] = useState(true);
@@ -30,7 +31,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         }
       },[authUser, router, pathname]);
       
-      //if (authLoading || isLoading) return <>Loading...</>
+      if (authLoading || isLoading) return <>Loading...</>
 
   return (
     <div className="h-full w-full">
