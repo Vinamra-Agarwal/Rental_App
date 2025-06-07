@@ -82,7 +82,20 @@ body,
 }
 
 .dashboard-container {
-  @apply pt-8 pb-5 px-8;
+  @apply pt-8 pb-5 px-8 transition-all duration-200;
+  margin-left: var(--sidebar-width);  
+}
+
+/* When sidebar is collapsed, adjust margin */
+[data-state="collapsed"] ~ * .dashboard-container {
+  margin-left: var(--sidebar-width-icon);
+}
+
+/* For mobile screens */
+@media (max-width: 768px) {
+  .dashboard-container {
+    margin-left: 0;
+  }
 }
 
 .mapboxgl-popup-content {

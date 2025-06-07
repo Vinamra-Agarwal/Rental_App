@@ -8,6 +8,8 @@ import React, { useEffect, useState } from "react";
 import { useGetAuthUserQuery } from "@/src/state/api";
 import { usePathname, useRouter } from "next/navigation";
 
+type UserRole = "manager" | "tenant";
+
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     const { data: authUser, isLoading: authLoading } = useGetAuthUserQuery();
     const router = useRouter();
@@ -16,7 +18,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
       if (authUser) {
-        const userRole = authUser.userRole?.toLowerCase();
+        const userRole = authUser.userRole?.toLowerCase() as UserRole;
         if (
           (userRole === "manager" && pathname.startsWith("/tenants")) ||
           (userRole === "tenant" && pathname.startsWith("/managers"))
@@ -36,15 +38,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     if (authLoading || isLoading) return <>Loading...</>
     if(!authUser?.userRole) return null;
 
+    const userRole = authUser.userRole.toLowerCase() as UserRole;
 
     return (
     <SidebarProvider>
       <div className="min-h-screen w-full bg-primary-100">
         <Navbar />
         <div style={{ paddingTop: `${NAVBAR_HEIGHT}px` }}>
-          <main className="flex">
-            <Sidebar userType={authUser?.userRole.toLowerCase()}/>
-            <div className="flex-grow transition-all duration-300">
+          <main className="flex relative">
+            <Sidebar userType={userRole}/>
+            <div className="flex-grow min-h-screen">
               {children}
             </div>
           </main>

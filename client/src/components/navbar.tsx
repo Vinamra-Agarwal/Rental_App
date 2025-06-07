@@ -24,10 +24,10 @@ const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isDashnboardPage =
+  const isDashboardPage =
     pathname.includes("/managers") || pathname.includes("/tenants");
 
-  const handlesSignOut = async () => {
+  const handleSignOut = async () => {
     await signOut();
     window.location.href = "/";
   };
@@ -35,11 +35,11 @@ const Navbar = () => {
   return (
     <div
       className="fixed top-0 left-0 w-full z-50 shadow-xl"
-      style={{ height: `${NAVBAR_HEIGHT}` }}
+      style={{ height: `${NAVBAR_HEIGHT}px` }}
     >
       <div className="flex justify-between items-center w-full py-3 px-8 bg-primary-700 text-white">
         <div className="flex items-center gap-4 md:gap-6">
-          {isDashnboardPage && (
+          {isDashboardPage && (
             <div className="md:hidden">
               <SidebarTrigger />
             </div>
@@ -65,10 +65,10 @@ const Navbar = () => {
               </div>
             </div>
           </Link>
-          {isDashnboardPage && authUser && (
+          {isDashboardPage && authUser && (
             <Button
               variant="secondary"
-              className="ms=d:ml-4 bg-primary-50 text-primary-700 hover:bg-secondary-500 hover:text-primary-50"
+              className="md:ml-4 bg-primary-50 text-primary-700 hover:bg-secondary-500 hover:text-primary-50"
               onClick={() =>
                 router.push(
                   authUser.userRole?.toLowerCase() === "manager"
@@ -93,9 +93,9 @@ const Navbar = () => {
             </Button>
           )}
         </div>
-        {!isDashnboardPage && (
+        {!isDashboardPage && (
           <p className="text-primary-200 hidden md:block">
-            Discover your perfect rental appartment with our advanced search
+            Discover your perfect rental apartment with our advanced search
           </p>
         )}
         <div className="flex items-center gap-5">
@@ -109,7 +109,7 @@ const Navbar = () => {
                 <Bell className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
                 <span className="absolute top-0 right-0 w-2 h-2 bg-secondary-700 rounded-full"></span>
               </div>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
                   <Avatar>
@@ -121,21 +121,20 @@ const Navbar = () => {
                   <p className="text-primary-200 hidden md:block">
                     {authUser.userInfo?.name}
                   </p>
-
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-white text-primary-700">
                   <DropdownMenuItem
                     className="cursor-pointer hover:!bg-primary-700 hover:!text-primary-100 font-bold"
                     onClick={() =>
                       router.push(
-                        authUser!.userRole?.toLowerCase() === "manager"
-                          ? "/manager/properties"
+                        authUser.userRole?.toLowerCase() === "manager"
+                          ? "/managers/properties"
                           : "/tenants/favorites",
                         { scroll: false }
                       )
                     }
                   >
-                    Go To Dashboard
+                    Go to Dashboard
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-primary-200" />
                   <DropdownMenuItem
@@ -151,9 +150,9 @@ const Navbar = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer hover:!bg-primary-700 hover:!text-primary-100"
-                    onClick={handlesSignOut}
+                    onClick={handleSignOut}
                   >
-                    Sign Out
+                    Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
