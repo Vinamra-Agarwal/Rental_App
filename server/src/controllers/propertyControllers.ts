@@ -43,11 +43,11 @@ export const getProperties = async (
     }
 
     if (priceMin) {
-      whereConditions.push(Prisma.sql`p.pricePerMonth >= ${Number(priceMin)}`);
+      whereConditions.push(Prisma.sql`p."pricePerMonth" >= ${Number(priceMin)}`);
     }
 
     if (priceMax) {
-      whereConditions.push(Prisma.sql`p.pricePerMonth <= ${Number(priceMax)}`);
+      whereConditions.push(Prisma.sql`p."pricePerMonth" <= ${Number(priceMax)}`);
     }
 
     if (beds && beds !== "any") {
@@ -60,25 +60,25 @@ export const getProperties = async (
 
     if (squareFeetMin) {
       whereConditions.push(
-        Prisma.sql`p.squareFeet >= ${Number(squareFeetMin)}`
+        Prisma.sql`p."squareFeet" >= ${Number(squareFeetMin)}`
       );
     }
 
     if (squareFeetMax) {
       whereConditions.push(
-        Prisma.sql`p.squareFeet <= ${Number(squareFeetMax)}`
+        Prisma.sql`p."squareFeet" <= ${Number(squareFeetMax)}`
       );
     }
 
     if (propertyType && propertyType !== "any") {
       whereConditions.push(
-        Prisma.sql`p.propertyType = ${propertyType}::"PropertyType"`
+        Prisma.sql`p."propertyType" = ${propertyType}::"PropertyType"`
       );
     }
 
     if (amenities && amenities !== "any") {
       const amenitiesArray = (amenities as string).split(",");
-      whereConditions.push(Prisma.sql`p.amenities @> ${amenitiesArray}`);
+      whereConditions.push(Prisma.sql`p."amenities" @> ARRAY[${Prisma.join(amenitiesArray)}]::"Amenity"[]`);
     }
 
     if (availableFrom) {
@@ -143,7 +143,7 @@ export const getProperties = async (
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Error retrieving manager: ${error.message}` });
+      .json({ message: `Error retrieving properties: ${error.message}` });
   }
 };
 

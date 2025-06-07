@@ -148,7 +148,7 @@ export const addFavoriteProperty = async (
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Error adding favourite property: ${error.message}` });
+      .json({ message: `Error adding favorite property: ${error.message}` });
   }
 };
 
@@ -174,6 +174,6 @@ export const removeFavoriteProperty = async (
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Error removing favourite property: ${error.message}` });
+      .json({ message: `Error removing favorite property: ${error.message}` });
   }
 };
