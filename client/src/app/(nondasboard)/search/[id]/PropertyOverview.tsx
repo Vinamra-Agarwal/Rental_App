@@ -54,12 +54,12 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
           <div className="border-l border-gray-300 h-10"></div>
           <div>
             <div className="text-sm text-gray-500">Bedrooms</div>
-            <div className="font-semibold">{property.beds} bd</div>
+            <div className="font-semibold">{property.beds} bed</div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
           <div>
             <div className="text-sm text-gray-500">Bathrooms</div>
-            <div className="font-semibold">{property.baths} ba</div>
+            <div className="font-semibold">{property.baths} bath</div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
           <div>

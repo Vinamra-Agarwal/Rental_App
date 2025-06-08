@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProperty = exports.getProperty = exports.getProperties = void 0;
+exports.updateLocationCoordinates = exports.createProperty = exports.getProperty = exports.getProperties = void 0;
 const client_1 = require("@prisma/client");
 const wkt_1 = require("@terraformer/wkt");
 const client_s3_1 = require("@aws-sdk/client-s3");
@@ -170,23 +170,28 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
         //     return uploadResult.Location;
         //   })
         // );
-        const geocodingUrl = `https://nominatim.openstreetmap.org/search?q=${new url_1.URLSearchParams({
+        // Geocoding
+        const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new url_1.URLSearchParams({
             street: address,
             city,
+            state,
             country,
-            postalcode: postalCode,
+            format: 'json',
+            limit: '1'
         }).toString()}`;
         const geocodingResponse = yield axios_1.default.get(geocodingUrl, {
             headers: {
-                "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com",
+                "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com)"
             },
         });
+        // Geocoding latitude, longitude from address
         const [longitude, latitude] = ((_a = geocodingResponse.data[0]) === null || _a === void 0 ? void 0 : _a.lon) && ((_b = geocodingResponse.data[0]) === null || _b === void 0 ? void 0 : _b.lat)
-            ? [
-                parseFloat(geocodingResponse.data[0].lon),
-                parseFloat(geocodingResponse.data[0].lat),
-            ]
-            : [0, 0];
+            ? [parseFloat(geocodingResponse.data[0].lon), parseFloat(geocodingResponse.data[0].lat)]
+            : [0, 0]; // Default to 0,0 if geocoding fails
+        console.log('Geocoding results:', {
+            address: `${address}, ${city}, ${state}, ${country}`,
+            coordinates: [longitude, latitude]
+        });
         // create location
         const [location] = yield prisma.$queryRaw `
     INSERT INTO "Location" (address, city, state, country, "postalCode", coordinates)
@@ -216,3 +221,20 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.createProperty = createProperty;
+const updateLocationCoordinates = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { locationId } = req.params;
+        const { longitude, latitude } = req.body;
+        const [updatedLocation] = yield prisma.$queryRaw `
+      UPDATE "Location"
+      SET coordinates = ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)
+      WHERE id = ${parseInt(locationId)}
+      RETURNING id, address, city, state, country, "postalCode", ST_AsText(coordinates) as coordinates;
+    `;
+        res.json(updatedLocation);
+    }
+    catch (error) {
+        res.status(500).json({ message: `Error updating location: ${error.message}` });
+    }
+});
+exports.updateLocationCoordinates = updateLocationCoordinates;

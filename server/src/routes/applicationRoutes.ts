@@ -8,8 +8,8 @@ import {
 
 const router = express.Router();
 
-router.get("/", authMiddleware(["tenant"]), createApplication);
-router.get("/:id/status", authMiddleware(["manager"]), updateApplicationStatus);
+router.post("/", authMiddleware(["tenant"]), createApplication);
+router.put("/:id/status", authMiddleware(["manager"]), updateApplicationStatus);
 router.get("/", authMiddleware(["manager", "tenant"]), listApplications);
 
 export default router;

@@ -222,28 +222,31 @@ export const createProperty = async (
     //   })
     // );
 
-    const geocodingUrl = `https://nominatim.openstreetmap.org/search?q=${new URLSearchParams(
-      {
-        street: address,
-        city,
-        country,
-        postalcode: postalCode,
-      }
-    ).toString()}`;
+    // Geocoding
+    const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new URLSearchParams({
+      street: address,
+      city,
+      state,
+      country,
+      format: 'json',
+      limit: '1'
+    }).toString()}`;
 
     const geocodingResponse = await axios.get(geocodingUrl, {
       headers: {
-        "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com",
+        "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com)"
       },
     });
 
-    const [longitude, latitude] =
-      geocodingResponse.data[0]?.lon && geocodingResponse.data[0]?.lat
-        ? [
-            parseFloat(geocodingResponse.data[0].lon),
-            parseFloat(geocodingResponse.data[0].lat),
-          ]
-        : [0, 0];
+    // Geocoding latitude, longitude from address
+    const [longitude, latitude] = geocodingResponse.data[0]?.lon && geocodingResponse.data[0]?.lat
+      ? [parseFloat(geocodingResponse.data[0].lon), parseFloat(geocodingResponse.data[0].lat)]
+      : [0, 0]; // Default to 0,0 if geocoding fails
+
+    console.log('Geocoding results:', {
+      address: `${address}, ${city}, ${state}, ${country}`,
+      coordinates: [longitude, latitude]
+    });
 
     // create location
     const [location] = await prisma.$queryRaw<Location[]>`
@@ -287,5 +290,26 @@ export const createProperty = async (
     res
       .status(500)
       .json({ message: `Error creating property: ${error.message}` });
+  }
+};
+
+export const updateLocationCoordinates = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { locationId } = req.params;
+    const { longitude, latitude } = req.body;
+
+    const [updatedLocation] = await prisma.$queryRaw<Location[]>`
+      UPDATE "Location"
+      SET coordinates = ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)
+      WHERE id = ${parseInt(locationId)}
+      RETURNING id, address, city, state, country, "postalCode", ST_AsText(coordinates) as coordinates;
+    `;
+
+    res.json(updatedLocation);
+  } catch (error: any) {
+    res.status(500).json({ message: `Error updating location: ${error.message}` });
   }
 };
