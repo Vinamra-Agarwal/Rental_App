@@ -27,11 +27,13 @@ const ManagerSettings = () => {
     })
   }
   return (
+    <div className="dashboard-container">
     <SettingsForm 
         initialData={initialData}
         onSubmit={handleSubmit}
         userType="manager"
     />
+    </div>
   );
 };
 

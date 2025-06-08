@@ -29,7 +29,7 @@ const Favorites = () => {
   );
 
   if (isLoading) return <Loading />;
-  if (error) return <div>Error loading favorites</div>;
+  if (error) return <div className="dashboard-container">Error loading favorites</div>;
 
   return (
     <div className="dashboard-container">
@@ -51,7 +51,7 @@ const Favorites = () => {
         ))}
       </div>
       {(!favoriteProperties || favoriteProperties.length === 0) && (
-          <p>You dont&apos;t have any favorited properties</p>
+          <p>You don&apos;t have any favorited properties</p>
       )}
     </div>
   );

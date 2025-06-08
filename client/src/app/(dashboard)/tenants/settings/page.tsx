@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/src/components/Loading";
 import SettingsForm from "@/src/components/SettingsForm";
 import {
   useGetAuthUserQuery,
@@ -12,7 +13,7 @@ const TenantSettings = () => {
   console.log("authUser:", authUser);
   const [updateTenant] = useUpdateTenantSettingsMutation();
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return < Loading />;
 
   const initialData = {
     name: authUser?.userInfo.name,
@@ -27,11 +28,13 @@ const TenantSettings = () => {
     })
   }
   return (
+    <div className="dashboard-container">
     <SettingsForm 
         initialData={initialData}
         onSubmit={handleSubmit}
         userType="tenant"
     />
+    </div>
   );
 };
 

@@ -104,7 +104,7 @@ const AppSidebar = ({ userType }: AppSidebarProps) => {
                     "flex items-center px-7 py-7",
                     isActive
                       ? "bg-gray-100"
-                      : "text-gray-700 hover:bg-gray-100",
+                      : "text-gray-600 hover:bg-gray-100",
                     open ? "text-blue-600" : "ml-[5px]"
                   )}
                 >

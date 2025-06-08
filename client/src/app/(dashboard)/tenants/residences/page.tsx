@@ -1,15 +1,14 @@
 "use client";
 
+import React from "react";
 import Card from "@/src/components/Card";
 import Header from "@/src/components/Header";
 import Loading from "@/src/components/Loading";
 import {
   useGetAuthUserQuery,
   useGetCurrentResidencesQuery,
-  // useGetPropertiesQuery,
   useGetTenantQuery,
 } from "@/src/state/api";
-import React from "react";
 
 const Residences = () => {
   const { data: authUser } = useGetAuthUserQuery();
@@ -29,7 +28,7 @@ const Residences = () => {
   });
 
   if (isLoading) return <Loading />;
-  if (error) return <div>Error loading Current Residences</div>;
+  if (error) return <div className="dashboard-container">Error loading Current Residences</div>;
 
   return (
     <div className="dashboard-container">
@@ -50,7 +49,7 @@ const Residences = () => {
         ))}
       </div>
       {(!currentResidences || currentResidences.length === 0) && (
-        <p>You dont&apos;t have any Current Residences</p>
+        <p>You don&lsquo;t have any current residences</p>
       )}
     </div>
   );

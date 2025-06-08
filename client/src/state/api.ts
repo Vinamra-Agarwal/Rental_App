@@ -1,6 +1,12 @@
 import { FiltersState } from ".";
 import { cleanParams, createNewUserInDatabase } from "../lib/utils";
-import { Manager, Property, Tenant } from "../types/prismaTypes";
+import {
+  Lease,
+  Manager,
+  Payment,
+  Property,
+  Tenant,
+} from "../types/prismaTypes";
 import {
   createApi,
   fetchBaseQuery,
@@ -31,7 +37,14 @@ export const api = createApi({
     },
   }),
   reducerPath: "api",
-  tagTypes: ["Managers", "Tenants", "Properties", "PropertyDetails"],
+  tagTypes: [
+    "Managers",
+    "Tenants",
+    "Properties",
+    "PropertyDetails",
+    "Leases",
+    "Payments",
+  ],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({
       queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
@@ -156,7 +169,7 @@ export const api = createApi({
     }),
 
     getCurrentResidences: build.query<Property[], string>({
-      query: (cognitoId) => `tenants/${cognitoId}/current-residences`,
+      query: (cognitoId) => `tenants/${cognitoId}/residences`,
       providesTags: (result) =>
         result
           ? [
@@ -205,6 +218,53 @@ export const api = createApi({
         { type: "Properties", id: "LIST" },
       ],
     }),
+
+    // manager related endpoints
+    getManagerProperties: build.query<Property[], string>({
+      query: (cognitoId) => `managers/${cognitoId}/properties`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              { type: "Properties", id: "LIST" },
+            ]
+          : [{ type: "Properties", id: "LIST" }],
+    }),
+
+    createProperty: build.mutation<Property, FormData>({
+      query: (newProperty) => ({
+        url: `properties`,
+        method: "POST",
+        body: newProperty,
+      }),
+      invalidatesTags: (result) => [
+        { type: "Properties", id: "LIST" },
+        { type: "Managers", id: result?.manager?.id },
+      ],
+      // async onQueryStarted(_, { queryFulfilled }) {
+      //   await withToast(queryFulfilled, {
+      //     success: "Property created successfully!",
+      //     error: "Failed to create property.",
+      //   });
+      // },
+    }),
+
+
+    // lease related endpoints
+    getLeases: build.query<Lease[], number>({
+      query: () => "leases",
+      providesTags: ["Leases"],
+    }),
+
+    getPropertyLeases: build.query<Lease[], number>({
+      query: (propertyId) => "property/${propertyId}/leases",
+      providesTags: ["Leases"],
+    }),
+
+    getPayments: build.query<Payment[], number>({
+      query: (leaseId) => `leases/${leaseId}/payments`,
+      providesTags: ["Payments"],
+    }),
   }),
 });
 
@@ -214,8 +274,13 @@ export const {
   useUpdateManagerSettingsMutation,
   useGetPropertiesQuery,
   useGetCurrentResidencesQuery,
+  useGetManagerPropertiesQuery,
+  useCreatePropertyMutation,
   useGetPropertyQuery,
   useGetTenantQuery,
   useAddFavoritePropertyMutation,
   useRemoveFavoritePropertyMutation,
+  useGetLeasesQuery,
+  useGetPropertyLeasesQuery,
+  useGetPaymentsQuery,
 } = api;
