@@ -241,7 +241,7 @@ export const createProperty = async (
     // Geocoding latitude, longitude from address
     const [longitude, latitude] = geocodingResponse.data[0]?.lon && geocodingResponse.data[0]?.lat
       ? [parseFloat(geocodingResponse.data[0].lon), parseFloat(geocodingResponse.data[0].lat)]
-      : [0, 0]; // Default to 0,0 if geocoding fails
+      : [0, 0]; // Default coordinates if geocoding fails
 
     console.log('Geocoding results:', {
       address: `${address}, ${city}, ${state}, ${country}`,

@@ -86,7 +86,7 @@ const ResidenceCard = ({
             </div>
           </div>
           <div className="text-xl font-bold">
-            ${currentLease.rent}{" "}
+            ₹{currentLease.rent}{" "}
             <span className="text-gray-500 text-sm font-normal">/ night</span>
           </div>
         </div>

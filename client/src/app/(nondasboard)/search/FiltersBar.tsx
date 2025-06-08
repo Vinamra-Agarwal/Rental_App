@@ -146,9 +146,9 @@ const FiltersBar = () => {
             </SelectTrigger>
             <SelectContent className="bg-white">
               <SelectItem value="any">Any Min Price</SelectItem>
-              {[500, 1000, 1500, 2000, 3000, 5000, 10000].map((price) => (
+              {[2500, 5000, 7500, 10000, 15000, 25000, 50000].map((price) => (
                 <SelectItem key={price} value={price.toString()}>
-                  ${price / 1000}k+
+                  ₹{price / 1000}k+
                 </SelectItem>
               ))}
             </SelectContent>
@@ -168,9 +168,9 @@ const FiltersBar = () => {
             </SelectTrigger>
             <SelectContent className="bg-white">
               <SelectItem value="any">Any Max Price</SelectItem>
-              {[1000, 2000, 3000, 5000, 10000].map((price) => (
+              {[5000, 10000, 15000, 25000, 50000].map((price) => (
                 <SelectItem key={price} value={price.toString()}>
-                  &lt;${price / 1000}k
+                  &lt;₹{price / 1000}k
                 </SelectItem>
               ))}
             </SelectContent>

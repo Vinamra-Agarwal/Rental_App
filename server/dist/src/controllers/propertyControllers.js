@@ -187,7 +187,7 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Geocoding latitude, longitude from address
         const [longitude, latitude] = ((_a = geocodingResponse.data[0]) === null || _a === void 0 ? void 0 : _a.lon) && ((_b = geocodingResponse.data[0]) === null || _b === void 0 ? void 0 : _b.lat)
             ? [parseFloat(geocodingResponse.data[0].lon), parseFloat(geocodingResponse.data[0].lat)]
-            : [0, 0]; // Default to 0,0 if geocoding fails
+            : [77.216721, 28.644800]; // Default coordinates if geocoding fails
         console.log('Geocoding results:', {
             address: `${address}, ${city}, ${state}, ${country}`,
             coordinates: [longitude, latitude]

@@ -48,7 +48,7 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
           <div>
             <div className="text-sm text-gray-500">Monthly Rent</div>
             <div className="font-semibold">
-              ${property.pricePerMonth.toLocaleString()}
+              ₹{property.pricePerMonth.toLocaleString()}
             </div>
           </div>
           <div className="border-l border-gray-300 h-10"></div>
@@ -76,31 +76,34 @@ const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
         <h2 className="text-xl font-semibold mb-5">About {property.name}</h2>
         <p className="text-gray-500 leading-7">
           {property.description}
-          Experience resort style luxury living at Seacrest Homes, where the
-          ocean and city are seamlessly intertwined. Our newly built community
-          features sophisticated two and three-bedroom residences, each complete
-          with high end designer finishes, quartz counter tops, stainless steel
-          whirlpool appliances, office nook, and a full size in-unit washer and
-          dryer. Find your personal escape at home beside stunning swimming
-          pools and spas with poolside cabanas. Experience your very own oasis
-          surrounded by lavish landscaped courtyards, with indoor/outdoor
-          entertainment seating. By day, lounge in the BBQ area and experience
-          the breath taking unobstructed views stretching from the Palos Verdes
-          Peninsula to Downtown Los Angeles, or watch the beauty of the South
-          Bay skyline light up by night. Start or end your day with a workout in
-          our full-size state of the art fitness club and yoga studio. Save the
-          commute and plan your next meeting in the business centers conference
-          room, adjacent to our internet and coffee lounge. Conveniently located
-          near beautiful local beaches with easy access to the 110, 405 and 91
-          freeways, exclusive shopping at the largest mall in the Western United
-          States “The Del Amo Fashion Center” to the hospital of your choice,
-          Kaiser Hospital, UCLA Harbor Medical Center, Torrance Memorial Medical
-          Center, and Providence Little Company of Mary Hospital Torrance rated
-          one of the top 10 Best in Los Angeles. Contact us today to tour and
-          embrace the Seacrest luxury lifestyle as your own. Seacrest Homes
-          Apartments is an apartment community located in Los Angeles County and
-          the 90501 ZIP Code. This area is served by the Los Angeles Unified
-          attendance zone.
+          Experience resort-style luxury living at Seacrest Homes, where the
+          vibrancy of city life meets serene green spaces. Our newly built
+          community offers sophisticated two and three-bedroom residences, each
+          thoughtfully designed with high-end finishes, elegant quartz
+          countertops, premium modular kitchen appliances, a dedicated office
+          nook, and a full-size in-unit washer and dryer. Discover your personal
+          sanctuary at home with stunning swimming pools and spas, complete with
+          poolside cabanas. Relax in your own oasis, surrounded by beautifully
+          landscaped gardens and indoor/outdoor entertainment lounges. Spend
+          your days unwinding in the exclusive BBQ area and enjoy breathtaking,
+          unobstructed views of the Delhi skyline, or watch the city lights
+          sparkle by night. Begin or end your day with a workout in our
+          state-of-the-art fitness club and yoga studio. For professionals, our
+          business center features a modern conference room, adjacent to a
+          high-speed internet and coffee lounge—perfect for meetings or remote
+          work. Conveniently located near Delhi’s most beautiful parks and
+          gardens, Seacrest Homes offers easy access to the city’s major roads
+          and expressways, including the Delhi-Gurgaon Expressway and the Outer
+          Ring Road. Enjoy proximity to world-class shopping at Select Citywalk
+          and DLF Promenade, as well as top healthcare facilities such as AIIMS,
+          Fortis, and Max Super Specialty Hospital. Contact us today to schedule
+          a tour and embrace the Seacrest luxury lifestyle as your own. Seacrest
+          Homes Apartments is a premier community located in South Delhi, within
+          the 110017 PIN code area, served by the Delhi Public School and other
+          leading educational institutions. Let me know if you want to customize
+          it further for a specific Delhi neighborhood or add more local flavor!
+          Related Experience resort-style luxury living at Seacrest Homes, now
+          in Delhi, where urban vibrancy and natural beauty blend seamlessly
         </p>
       </div>
     </div>

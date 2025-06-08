@@ -2,71 +2,71 @@
   {
     "id": 1,
     "cognitoId": "010be580-60a1-70ae-780e-18a6fd94ad32",
-    "name": "John Smith",
-    "email": "john.smith@example.com",
-    "phoneNumber": "+1 (555) 123-4567"
+    "name": "Aditya Chauhan",
+    "email": "aditya.chauhan@example.com",
+    "phoneNumber": "+91 9898989898"
   },
   {
     "id": 2,
     "cognitoId": "us-east-2:23456789-90ab-cdef-1234-567890abcdef",
-    "name": "Sarah Johnson",
-    "email": "sarah.johnson@example.com",
-    "phoneNumber": "+1 (555) 987-6543"
+    "name": "Sanya Malik",
+    "email": "sanya.malik@example.com",
+    "phoneNumber": "+91 9933445566"
   },
   {
     "id": 3,
     "cognitoId": "us-east-2:34567890-90ab-cdef-1234-567890abcdef",
-    "name": "Michael Brown",
-    "email": "michael.brown@example.com",
-    "phoneNumber": "+1 (555) 456-7890"
+    "name": "Nikhil Patil",
+    "email": "nikhil.patil@example.com",
+    "phoneNumber": "+91 9822334455"
   },
   {
     "id": 4,
     "cognitoId": "us-east-2:45678901-90ab-cdef-1234-567890abcdef",
-    "name": "Emily Davis",
-    "email": "emily.davis@example.com",
-    "phoneNumber": "+1 (555) 234-5678"
+    "name": "Yash Thakur",
+    "email": "yash.thakur@example.com",
+    "phoneNumber": "+91 9944112200"
   },
   {
     "id": 5,
     "cognitoId": "us-east-2:56789012-90ab-cdef-1234-567890abcdef",
-    "name": "Robert Wilson",
-    "email": "robert.wilson@example.com",
-    "phoneNumber": "+1 (555) 876-5432"
+    "name": "Diya Menon",
+    "email": "diya.menon@example.com",
+    "phoneNumber": "+91 9798997878"
   },
   {
     "id": 6,
     "cognitoId": "us-east-2:67890123-90ab-cdef-1234-567890abcdef",
-    "name": "Lisa Thompson",
-    "email": "lisa.thompson@example.com",
-    "phoneNumber": "+1 (555) 345-6789"
+    "name": "Kunal Saxena",
+    "email": "kunal.saxena@example.com",
+    "phoneNumber": "+91 9888777666"
   },
   {
     "id": 7,
     "cognitoId": "us-east-2:78901234-90ab-cdef-1234-567890abcdef",
-    "name": "Daniel Martinez",
-    "email": "daniel.martinez@example.com",
-    "phoneNumber": "+1 (555) 789-0123"
+    "name": "Ananya Desai",
+    "email": "ananya.desai@example.com",
+    "phoneNumber": "+91 9988776655"
   },
   {
     "id": 8,
     "cognitoId": "us-east-2:89012345-90ab-cdef-1234-567890abcdef",
-    "name": "Olivia Garcia",
-    "email": "olivia.garcia@example.com",
-    "phoneNumber": "+1 (555) 678-9012"
+    "name": "Karan Goyal",
+    "email": "karan.goyal@example.com",
+    "phoneNumber": "+91 9845123456"
   },
   {
     "id": 9,
     "cognitoId": "us-east-2:90123456-90ab-cdef-1234-567890abcdef",
-    "name": "Ethan Rodriguez",
-    "email": "ethan.rodriguez@example.com",
-    "phoneNumber": "+1 (555) 567-8901"
+    "name": "Rohan Mehta",
+    "email": "rohan.mehta@example.com",
+    "phoneNumber": "+91 9900887766"
   },
   {
     "id": 10,
     "cognitoId": "us-east-2:01234567-90ab-cdef-1234-567890abcdef",
-    "name": "Sophia Kim",
-    "email": "sophia.kim@example.com",
-    "phoneNumber": "+1 (555) 456-7890"
+    "name": "Devansh Nair",
+    "email": "devansh.nair@example.com",
+    "phoneNumber": "+91 9090909090"
   }
 ]
