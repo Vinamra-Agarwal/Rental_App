@@ -71,10 +71,11 @@ const getProperties = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             if (availableFromDate) {
                 const date = new Date(availableFromDate);
                 if (!isNaN(date.getTime())) {
-                    whereConditions.push(client_1.Prisma.sql `EXISTS (
-                SELECT 1 FROM "Lease" l
-                WHERE l."propertyId" = p.id
-                AND l."startDate" >= ${date.toISOString()}
+                    whereConditions.push(client_1.Prisma.sql `NOT EXISTS (
+              SELECT 1 FROM "Lease" l
+              WHERE l."propertyId" = p.id
+              AND l."startDate" <= ${date.toISOString()}::timestamp
+              AND l."endDate" >= ${date.toISOString()}::timestamp
             )`);
                 }
             }
@@ -132,7 +133,7 @@ const getProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             },
         });
         if (property) {
-            const coordinates = yield prisma.$queryRaw `SELECT ST_astEXT(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
+            const coordinates = yield prisma.$queryRaw `SELECT ST_AsTEXT(coordinates) as coordinates FROM "Location" WHERE id = ${property.location.id}`;
             const geoJSON = (0, wkt_1.wktToGeoJSON)(((_a = coordinates[0]) === null || _a === void 0 ? void 0 : _a.coordinates) || "");
             const longitude = geoJSON.coordinates[0];
             const latitude = geoJSON.coordinates[1];
@@ -151,10 +152,10 @@ const getProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.getProperty = getProperty;
 const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d;
     try {
         const files = req.files;
-        const _c = req.body, { address, city, state, country, postalCode, managerCognitoId } = _c, propertyData = __rest(_c, ["address", "city", "state", "country", "postalCode", "managerCognitoId"]);
+        const _e = req.body, { address, city, state, country, postalCode, managerCognitoId } = _e, propertyData = __rest(_e, ["address", "city", "state", "country", "postalCode", "managerCognitoId"]);
         // const photoUrls = await Promise.all(
         //   files.map(async (file) => {
         //     const uploadParams = {
@@ -176,28 +177,33 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
             city,
             state,
             country,
-            format: 'json',
-            limit: '1'
+            postalcode: postalCode,
+            format: "json",
+            limit: "1",
         }).toString()}`;
         const geocodingResponse = yield axios_1.default.get(geocodingUrl, {
             headers: {
-                "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com)"
+                "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com)",
             },
+            timeout: 10000,
         });
         // Geocoding latitude, longitude from address
         const [longitude, latitude] = ((_a = geocodingResponse.data[0]) === null || _a === void 0 ? void 0 : _a.lon) && ((_b = geocodingResponse.data[0]) === null || _b === void 0 ? void 0 : _b.lat)
-            ? [parseFloat(geocodingResponse.data[0].lon), parseFloat(geocodingResponse.data[0].lat)]
-            : [77.216721, 28.644800]; // Default coordinates if geocoding fails
-        console.log('Geocoding results:', {
+            ? [
+                parseFloat((_c = geocodingResponse.data[0]) === null || _c === void 0 ? void 0 : _c.lon),
+                parseFloat((_d = geocodingResponse.data[0]) === null || _d === void 0 ? void 0 : _d.lat),
+            ]
+            : [77.216721, 28.6448]; // Default coordinates if geocoding fails
+        console.log("Geocoding results:", {
             address: `${address}, ${city}, ${state}, ${country}`,
-            coordinates: [longitude, latitude]
+            coordinates: [longitude, latitude],
         });
         // create location
         const [location] = yield prisma.$queryRaw `
-    INSERT INTO "Location" (address, city, state, country, "postalCode", coordinates)
-    VALUES (${address}, ${city}, ${state}, ${country}, ${postalCode}, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326))
-    RETURNING id, address, city, state, country, "postalCode", ST_AsText(coordinates) as coordinates;
-  `;
+      INSERT INTO "Location" (address, city, state, country, "postalCode", coordinates)
+      VALUES (${address}, ${city}, ${state}, ${country}, ${postalCode}, ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326))
+      RETURNING id, address, city, state, country, "postalCode", ST_AsText(coordinates) as coordinates;
+    `;
         // create property
         const newProperty = yield prisma.property.create({
             data: Object.assign(Object.assign({}, propertyData), { 
@@ -234,7 +240,9 @@ const updateLocationCoordinates = (req, res) => __awaiter(void 0, void 0, void 0
         res.json(updatedLocation);
     }
     catch (error) {
-        res.status(500).json({ message: `Error updating location: ${error.message}` });
+        res
+            .status(500)
+            .json({ message: `Error updating location: ${error.message}` });
     }
 });
 exports.updateLocationCoordinates = updateLocationCoordinates;

@@ -1,3 +1,4 @@
+import Loading from "@/src/components/Loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import { AmenityIcons, HighlightIcons } from "@/src/lib/constants";
 import { formatEnumString } from "@/src/lib/utils";
@@ -12,7 +13,7 @@ const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
     isLoading,
   } = useGetPropertyQuery(propertyId);
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading />;
   if (isError || !property) {
     return <>Property not Found</>;
   }

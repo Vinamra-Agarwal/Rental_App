@@ -10,6 +10,7 @@ import CardCompact from "@/src/components/CardCompact";
 import { useAppSelector } from "@/src/state/redux";
 import { Property } from "@/src/types/prismaTypes";
 import React from "react";
+import Loading from "@/src/components/Loading";
 
 const Listings = () => {
   const { data: authUser } = useGetAuthUserQuery();
@@ -50,7 +51,7 @@ const Listings = () => {
     }
   };
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading />;
   if (isError || !properties) return <>Failed to fetch properties</>;
 
   return (

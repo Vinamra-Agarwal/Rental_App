@@ -1,3 +1,4 @@
+import Loading from "@/src/components/Loading";
 import { useGetPropertyQuery } from "@/src/state/api";
 import { Compass, MapPin } from "lucide-react";
 import mapboxgl from "mapbox-gl";
@@ -41,7 +42,7 @@ const PropertyLocation = ({ propertyId }: PropertyDetailsProps) => {
     return () => map.remove();
   }, [property, isError, isLoading]);
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading />;
   if (isError || !property) {
     return <>Property not Found</>;
   }

@@ -53,7 +53,7 @@ const FeaturesSection = () => {
                     description={
                         [
                             "Discover the best rental options with user revies and ratings.",
-                            "Get access to user reviews and ratings for a better ubnderstanding.",
+                            "Get access to user reviews and ratings for a better understanding.",
                             "Find trustworthy and verified rental listings for a hassle-free experience."
                         ][index]
                     }

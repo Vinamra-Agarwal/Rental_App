@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/src/components/Loading";
 import SettingsForm from "@/src/components/SettingsForm";
 import {
   useGetAuthUserQuery,
@@ -12,7 +13,7 @@ const ManagerSettings = () => {
   console.log("authUser:", authUser);
   const [updateManager] = useUpdateManagerSettingsMutation();
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading />;
 
   const initialData = {
     name: authUser?.userInfo.name,
