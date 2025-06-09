@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
 import { type AuthUser } from "aws-amplify/auth";
-import { type BaseQueryFn } from "@reduxjs/toolkit/query";
+import { type BaseQueryFn, type BaseQueryApi } from "@reduxjs/toolkit/query";
 import { type FetchBaseQueryError, type FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,12 +23,12 @@ export function formatPriceValue(value: number | null, isMin: boolean) {
   return isMin ? `₹${value}+` : `<₹${value}`;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export function cleanParams(params: Record<string, any>): Record<string, any> {
   return Object.fromEntries(
     Object.entries(params).filter(
       (
-        [_, value] // eslint-disable-line @typescript-eslint/no-unused-vars
+        [_, value]
       ) =>
         value !== undefined &&
         value !== "any" &&
@@ -61,12 +61,12 @@ export const withToast = async <T>(
 
 type IdTokenPayload = {
   email?: string;
-  [key: string]: string | undefined;
+  [key: string]: any;
 };
 
 type CreateUserResponse = {
-  data?: unknown;
-  error?: FetchBaseQueryError;
+  error?: undefined;
+  data: unknown;
   meta?: FetchBaseQueryMeta;
 };
 
@@ -100,16 +100,20 @@ export const createNewUserInDatabase = async (
   });
 
   try {
-    const createUserResponse = await fetchWithBQ({
-      url: createEndpoint,
-      method: "POST",
-      body: {
-        cognitoId: user.userId,
-        name: user.username,
-        email: idToken?.payload?.email || "",
-        phoneNumber: "",
+    const createUserResponse = await fetchWithBQ(
+      {
+        url: createEndpoint,
+        method: "POST",
+        body: {
+          cognitoId: user.userId,
+          name: user.username,
+          email: idToken?.payload?.email || "",
+          phoneNumber: "",
+        },
       },
-    });
+      { signal: new AbortController().signal } as BaseQueryApi,
+      {}
+    ) as CreateUserResponse;
 
     console.log("Create user response:", createUserResponse);
 
