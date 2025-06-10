@@ -27,6 +27,7 @@ exports.updateLocationCoordinates = exports.createProperty = exports.getProperty
 const client_1 = require("@prisma/client");
 const wkt_1 = require("@terraformer/wkt");
 const client_s3_1 = require("@aws-sdk/client-s3");
+const lib_storage_1 = require("@aws-sdk/lib-storage");
 const url_1 = require("url");
 const axios_1 = __importDefault(require("axios"));
 const prisma = new client_1.PrismaClient();
@@ -156,21 +157,19 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const files = req.files;
         const _e = req.body, { address, city, state, country, postalCode, managerCognitoId } = _e, propertyData = __rest(_e, ["address", "city", "state", "country", "postalCode", "managerCognitoId"]);
-        // const photoUrls = await Promise.all(
-        //   files.map(async (file) => {
-        //     const uploadParams = {
-        //       Bucket: process.env.S3_BUCKET_NAME!,
-        //       Key: `properties/${Date.now()}-${file.originalname}`,
-        //       Body: file.buffer,
-        //       ContentType: file.mimetype,
-        //     };
-        //     const uploadResult = await new Upload({
-        //       client: s3Client,
-        //       params: uploadParams,
-        //     }).done();
-        //     return uploadResult.Location;
-        //   })
-        // );
+        const photoUrls = yield Promise.all(files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+            const uploadParams = {
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: `properties/${Date.now()}-${file.originalname}`,
+                Body: file.buffer,
+                ContentType: file.mimetype,
+            };
+            const uploadResult = yield new lib_storage_1.Upload({
+                client: s3Client,
+                params: uploadParams,
+            }).done();
+            return uploadResult.Location;
+        })));
         // Geocoding
         const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new url_1.URLSearchParams({
             street: address,
@@ -206,9 +205,7 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
     `;
         // create property
         const newProperty = yield prisma.property.create({
-            data: Object.assign(Object.assign({}, propertyData), { 
-                //photoUrls,
-                locationId: location.id, managerCognitoId, amenities: typeof propertyData.amenities === "string"
+            data: Object.assign(Object.assign({}, propertyData), { photoUrls, locationId: location.id, managerCognitoId, amenities: typeof propertyData.amenities === "string"
                     ? propertyData.amenities.split(",")
                     : [], highlights: typeof propertyData.highlights === "string"
                     ? propertyData.highlights.split(",")

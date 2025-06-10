@@ -12,6 +12,7 @@ import {
 } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import { useRouter, usePathname } from "next/navigation";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 Amplify.configure({
   Auth: {
@@ -139,7 +140,7 @@ const formFields = {
 };
 
 const Auth = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user, authStatus } = useAuthenticator((context) => [context.user, context.authStatus]);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -149,10 +150,29 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
 
   // Redirect authenticated users away from auth pages
   useEffect(() => {
-    if (user && isAuthPage) {
-      router.push("/");
-    }
-  }, [user, isAuthPage, router]);
+    const redirectUser = async () => {
+      if (user && isAuthPage && authStatus === "authenticated") {
+        try {
+          const session = await fetchAuthSession();
+          const { idToken } = session.tokens ?? {};
+          const userRole = idToken?.payload["custom:role"] as string;
+          
+          if (userRole === "manager") {
+            router.push("/managers/properties");
+          } else if (userRole === "tenant") {
+            router.push("/search");
+          } else {
+            router.push("/");
+          }
+        } catch (error) {
+          console.error("Error getting user role:", error);
+          router.push("/");
+        }
+      }
+    };
+
+    redirectUser();
+  }, [user, authStatus, isAuthPage, router]);
 
   // Allow access to public pages without authentication
   if (!isAuthPage && !isDashboardPage) {

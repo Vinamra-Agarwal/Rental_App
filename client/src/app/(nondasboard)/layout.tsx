@@ -12,27 +12,23 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   console.log("authUser:", authUser);
 
   const router = useRouter();
-      const pathname = usePathname();
-      const [ isLoading, setIsLoading ] = useState(true);
-  
-      useEffect(() => {
-        if (authUser) {
-          const userRole = authUser.userRole?.toLowerCase();
-          if (
-            (userRole === "manager" && pathname.startsWith("/search")) ||
-            (userRole === "manager" && pathname === "/")
-            ) {
-            router.push(
-              "/managers/properties",
-              { scroll: false }
-            )
-          } else {
-            setIsLoading(false)
-          }
-        }
-      },[authUser, router, pathname]);
-      
-      if (authLoading || isLoading) return <Loading />;
+  const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (authUser) {
+      const userRole = authUser.userRole?.toLowerCase();
+      if (userRole === "manager") {
+        router.push("/managers/properties", { scroll: false });
+      } else {
+        setIsLoading(false);
+      }
+    } else {
+      setIsLoading(false);
+    }
+  }, [authUser, router, pathname]);
+
+  if (authLoading || isLoading) return <Loading />;
 
   return (
     <div className="h-full w-full">
