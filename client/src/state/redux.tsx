@@ -18,7 +18,30 @@ export const makeStore = () => {
   return configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(api.middleware),
+      getDefaultMiddleware({
+        serializableCheck: {
+          // Ignore these action types
+          ignoredActions: [
+            'api/executeQuery/rejected',
+            'api/executeQuery/fulfilled',
+            'api/executeQuery/pending'
+          ],
+          // Ignore these field paths in all actions
+          ignoredActionPaths: [
+            'meta.arg',
+            'meta.baseQueryMeta.request',
+            'meta.baseQueryMeta.response',
+            'payload.timestamp'
+          ],
+          // Ignore these paths in the state
+          ignoredPaths: [
+            'api.queries',
+            'api.mutations',
+            'api.provided',
+            'api.subscriptions'
+          ],
+        },
+      }).concat(api.middleware),
   });
 };
 
