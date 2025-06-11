@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Amplify } from "aws-amplify";
 import {
   Authenticator,
@@ -13,6 +13,7 @@ import {
 import "@aws-amplify/ui-react/styles.css";
 import { useRouter, usePathname } from "next/navigation";
 import { fetchAuthSession } from "aws-amplify/auth";
+import Loading from "@/src/components/Loading";
 
 Amplify.configure({
   Auth: {
@@ -143,36 +144,45 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
   const { user, authStatus } = useAuthenticator((context) => [context.user, context.authStatus]);
   const router = useRouter();
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(true);
 
   const isAuthPage = pathname.match(/^\/(signin|signup)$/);
   const isDashboardPage =
     pathname.startsWith("/managers") || pathname.startsWith("/tenants");
 
-  // Redirect authenticated users away from auth pages
   useEffect(() => {
-    const redirectUser = async () => {
-      if (user && isAuthPage && authStatus === "authenticated") {
+    const handleAuthRedirect = async () => {
+      if (user && authStatus === "authenticated") {
         try {
           const session = await fetchAuthSession();
           const { idToken } = session.tokens ?? {};
           const userRole = idToken?.payload["custom:role"] as string;
           
-          if (userRole === "manager") {
-            router.push("/managers/properties");
-          } else if (userRole === "tenant") {
-            router.push("/search");
-          } else {
-            router.push("/");
+          const nextPath = userRole === "manager" ? "/managers/properties" : "/search";
+          
+          // If on auth page, redirect
+          if (isAuthPage) {
+            window.location.replace(nextPath);
+            return;
           }
         } catch (error) {
           console.error("Error getting user role:", error);
-          router.push("/");
         }
       }
+      setIsLoading(false);
     };
 
-    redirectUser();
-  }, [user, authStatus, isAuthPage, router]);
+    handleAuthRedirect();
+  }, [user, authStatus, isAuthPage]);
+
+  if (isLoading) {
+    return <Loading />
+  }
+
+  // Prevent authenticated users from seeing auth pages
+  if (isAuthPage && authStatus === "authenticated") {
+    return null;
+  }
 
   // Allow access to public pages without authentication
   if (!isAuthPage && !isDashboardPage) {
