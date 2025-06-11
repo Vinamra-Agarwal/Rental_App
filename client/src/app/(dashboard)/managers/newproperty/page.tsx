@@ -61,7 +61,31 @@ const NewProperty = () => {
     });
     formData.append("managerCognitoId", authUser.cognitoInfo.userId);
 
-    await createProperty(formData);
+    try {
+      await createProperty(formData);
+      form.reset({
+        name: "",
+        description: "",
+        pricePerMonth: 1000,
+        securityDeposit: 500,
+        applicationFee: 100,
+        isPetsAllowed: true,
+        isParkingIncluded: true,
+        photoUrls: [],
+        amenities: "",
+        highlights: "",
+        beds: 1,
+        baths: 1,
+        squareFeet: 1000,
+        address: "",
+        city: "",
+        state: "",
+        country: "",
+        postalCode: "",
+      });
+    } catch (error) {
+      console.error("Failed to create property:", error);
+    }
   };
 
   return (
