@@ -230,38 +230,31 @@ export const createProperty = async (
       })
     );
 
-    // Geocoding
-    const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new URLSearchParams(
-      {
-        street: address,
-        city,
-        state,
-        country,
-        postalcode: postalCode,
-        format: "json",
-        limit: "1",
-      }
-    ).toString()}`;
+    // Geocoding using Mapbox
+    const fullAddress = `${address}, ${city}, ${state}, ${country}, ${postalCode}`;
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+    
+    if (!mapboxToken) {
+      throw new Error('NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN environment variable is not set');
+    }
+
+    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+      fullAddress
+    )}.json?access_token=${mapboxToken}&limit=1`;
 
     const geocodingResponse = await axios.get(geocodingUrl, {
-      headers: {
-        "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com)",
-      },
       timeout: 10000,
     });
 
-    // Geocoding latitude, longitude from address
+    // Extract coordinates from Mapbox response
     const [longitude, latitude] =
-      geocodingResponse.data[0]?.lon && geocodingResponse.data[0]?.lat
-        ? [
-            parseFloat(geocodingResponse.data[0]?.lon),
-            parseFloat(geocodingResponse.data[0]?.lat),
-          ]
-        : [77.216721, 28.6448]; // Default coordinates if geocoding fails
+      geocodingResponse.data.features?.[0]?.center || [77.216721, 28.6448]; // Default coordinates if geocoding fails
 
     console.log("Geocoding results:", {
-      address: `${address}, ${city}, ${state}, ${country}`,
+      address: fullAddress,
       coordinates: [longitude, latitude],
+      place_name: geocodingResponse.data.features?.[0]?.place_name,
+      relevance: geocodingResponse.data.features?.[0]?.relevance,
     });
 
     // create location

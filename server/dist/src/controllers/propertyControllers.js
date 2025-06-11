@@ -28,7 +28,6 @@ const client_1 = require("@prisma/client");
 const wkt_1 = require("@terraformer/wkt");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const lib_storage_1 = require("@aws-sdk/lib-storage");
-const url_1 = require("url");
 const axios_1 = __importDefault(require("axios"));
 const prisma = new client_1.PrismaClient();
 const s3Client = new client_s3_1.S3Client({
@@ -153,10 +152,10 @@ const getProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 exports.getProperty = getProperty;
 const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     try {
         const files = req.files;
-        const _e = req.body, { address, city, state, country, postalCode, managerCognitoId } = _e, propertyData = __rest(_e, ["address", "city", "state", "country", "postalCode", "managerCognitoId"]);
+        const _g = req.body, { address, city, state, country, postalCode, managerCognitoId } = _g, propertyData = __rest(_g, ["address", "city", "state", "country", "postalCode", "managerCognitoId"]);
         const photoUrls = yield Promise.all(files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
             const uploadParams = {
                 Bucket: process.env.S3_BUCKET_NAME,
@@ -170,32 +169,23 @@ const createProperty = (req, res) => __awaiter(void 0, void 0, void 0, function*
             }).done();
             return uploadResult.Location;
         })));
-        // Geocoding
-        const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new url_1.URLSearchParams({
-            street: address,
-            city,
-            state,
-            country,
-            postalcode: postalCode,
-            format: "json",
-            limit: "1",
-        }).toString()}`;
+        // Geocoding using Mapbox
+        const fullAddress = `${address}, ${city}, ${state}, ${country}, ${postalCode}`;
+        const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+        if (!mapboxToken) {
+            throw new Error('NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN environment variable is not set');
+        }
+        const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(fullAddress)}.json?access_token=${mapboxToken}&limit=1`;
         const geocodingResponse = yield axios_1.default.get(geocodingUrl, {
-            headers: {
-                "User-Agent": "RealEstateApp (agarwal.vinamra0405@gmail.com)",
-            },
             timeout: 10000,
         });
-        // Geocoding latitude, longitude from address
-        const [longitude, latitude] = ((_a = geocodingResponse.data[0]) === null || _a === void 0 ? void 0 : _a.lon) && ((_b = geocodingResponse.data[0]) === null || _b === void 0 ? void 0 : _b.lat)
-            ? [
-                parseFloat((_c = geocodingResponse.data[0]) === null || _c === void 0 ? void 0 : _c.lon),
-                parseFloat((_d = geocodingResponse.data[0]) === null || _d === void 0 ? void 0 : _d.lat),
-            ]
-            : [77.216721, 28.6448]; // Default coordinates if geocoding fails
+        // Extract coordinates from Mapbox response
+        const [longitude, latitude] = ((_b = (_a = geocodingResponse.data.features) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.center) || [77.216721, 28.6448]; // Default coordinates if geocoding fails
         console.log("Geocoding results:", {
-            address: `${address}, ${city}, ${state}, ${country}`,
+            address: fullAddress,
             coordinates: [longitude, latitude],
+            place_name: (_d = (_c = geocodingResponse.data.features) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.place_name,
+            relevance: (_f = (_e = geocodingResponse.data.features) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f.relevance,
         });
         // create location
         const [location] = yield prisma.$queryRaw `
